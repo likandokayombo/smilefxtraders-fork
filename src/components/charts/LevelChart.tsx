@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { CandleChart, Icon, Skeleton, type PriceLine } from "@/components/ui";
 import { useCandles, pricePrecision, type CandlePeriod } from "@/lib/hooks/useCandles";
 
@@ -45,9 +45,17 @@ export function LevelChart({
   // was asking for 60 bars of future, so the chart came back with a dozen very
   // fat candles. Clamping the end to now and taking a fixed span backwards
   // gives every chart a consistent density, while still containing the event.
+  //
+  // "Now" is read once per mount: callers pass `at` as an inline `new Date()`,
+  // so reading the clock during render gave a fresh `to` (and query key) on
+  // every render, and each fetch's own re-render started another fetch.
+  // Memoising on the timestamps rather than the Date objects keeps `to` stable.
+  const [now] = useState(Date.now);
+  const atMs = at.getTime();
+  const untilMs = until?.getTime() ?? null;
   const to = useMemo(
-    () => new Date(Math.min((until ?? at).getTime() + span, Date.now())),
-    [at, until, span],
+    () => new Date(Math.min((untilMs ?? atMs) + span, now)),
+    [atMs, untilMs, span, now],
   );
   const from = useMemo(() => new Date(to.getTime() - span * 2), [to, span]);
 

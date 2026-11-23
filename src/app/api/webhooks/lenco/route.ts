@@ -42,7 +42,7 @@ function getDb() {
 }
 
 const db = new Proxy({} as PrismaClient, {
-  get: (_, prop) => (getDb() as any)[prop],
+  get: (_, prop) => Reflect.get(getDb(), prop),
 });
 
 // ── Webhook body shape from Lenco ────────────────────────────────────────────

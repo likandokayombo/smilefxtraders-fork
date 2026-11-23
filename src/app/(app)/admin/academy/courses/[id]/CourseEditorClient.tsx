@@ -193,7 +193,7 @@ export function CourseEditorClient({ course }: { course: Course }) {
 
           {course.lessons.length === 0 && (
             <div className="text-center py-8 text-[13px] text-ink-dim">
-              No lessons yet. Click "Add lesson" to create the first one.
+              No lessons yet. Click &ldquo;Add lesson&rdquo; to create the first one.
             </div>
           )}
         </div>
